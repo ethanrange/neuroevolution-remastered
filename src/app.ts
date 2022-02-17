@@ -1,4 +1,16 @@
 let simulation: Simulation;
+let tracks: TrackStore[];
+
+interface TrackStore {
+  "finish": number[]
+  "walls": number[][];
+  "cps": number[][];
+}
+
+function preload() {
+  let trackFiles: string[] = ['track1'];
+  tracks = trackFiles.map(n => loadJSON(`src/resources/${n}.json`) as TrackStore)
+}
 
 function setup() {
   console.log("Program initialised");
@@ -7,7 +19,7 @@ function setup() {
   rectMode(CORNER);
   frameRate(60);
 
-  simulation = populationSim(new Track(), 10)
+  simulation = populationSim(new Track(0), 10);
 }
 
 function windowResized() {
@@ -33,4 +45,5 @@ function draw() {
 
   simulation.displayGenerationInfo()
   simulation.displayNetworkInfo(1010, 20)
+  simulation.displayTrack()
 }
