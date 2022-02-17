@@ -17,9 +17,9 @@ class Simulation {
     }
 
     displayTrack() {
-        this.track.walls.forEach(w => w.show())
         this.track.checkpoints.forEach(cp => cp.show())
         this.track.finish.show()
+        this.track.walls.forEach(w => w.show())
     }
 
     displayGenerationInfo() {
