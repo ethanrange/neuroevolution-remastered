@@ -1,9 +1,13 @@
+let simulation: Simulation;
+
 function setup() {
   console.log("Program initialised");
 
   createCanvas(windowWidth, windowHeight);
-  rectMode(CENTER);
+  rectMode(CORNER);
   frameRate(60);
+
+  simulation = populationSim(new Track(), 10)
 }
 
 function windowResized() {
@@ -26,4 +30,6 @@ function draw() {
   fill(color(50));
   noStroke();
   circle(mouseX, mouseY, 25);
+
+  simulation.displayGenerationInfo()
 }
