@@ -19,7 +19,7 @@ function setup() {
   rectMode(CORNER);
   frameRate(60);
 
-  simulation = populationSim(new Track(0), 10);
+  simulation = populationSim(new Track(0), 1);
 }
 
 function windowResized() {
@@ -46,4 +46,6 @@ function draw() {
   simulation.displayGenerationInfo()
   simulation.displayNetworkInfo(1010, 20)
   simulation.displayTrack()
+
+  simulation.current.show()
 }

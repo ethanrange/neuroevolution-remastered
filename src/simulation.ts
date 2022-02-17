@@ -105,10 +105,11 @@ class Simulation {
 
 function populationSim(track: Track, size: number) {
     console.assert(size != 0)
-    let population = new Array(size).fill(null).map((_, i) => new Car(1, i, new Network()))
+    let population = new Array(size).fill(null).map((_, i) => 
+        new Car(1, i, new Network(), createVector(412, 717), 7))
     return new Simulation(track, population)
 }
 
 function networkSim(track: Track, network: Network) {
-    return new Simulation(track, [new Car(1, 1, network)])
+    return new Simulation(track, [new Car(1, 1, network, createVector(412, 717), 7)])
 }
