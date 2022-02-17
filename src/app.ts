@@ -32,4 +32,5 @@ function draw() {
   circle(mouseX, mouseY, 25);
 
   simulation.displayGenerationInfo()
+  simulation.displayNetworkInfo(1010, 20)
 }
