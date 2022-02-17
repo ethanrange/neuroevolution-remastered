@@ -1,0 +1,16 @@
+{
+  "name": "neuroevolution-remastered",
+  "version": "1.0.0",
+  "description": "Remastered version of the my original Python neuroevolution, now in Typescript.",
+  "scripts": {
+    "start": "run-p start-compile start-run",
+    "start-compile": "tsc --watch",
+    "start-run": "browser-sync start --server -w --no-open"
+  },
+  "devDependencies": {
+    "@types/p5": "^1.3.3",
+    "browser-sync": "^2.27.7",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.8.3"
+  }
+}
