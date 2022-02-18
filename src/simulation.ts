@@ -100,7 +100,7 @@ class Simulation {
 
         text(`Current car number: ${this.current.id}`, 60, 510)
         text(`Current car ID: ${this.current.toString()}`, 60, 550)
-        text(`Car Position: (x, y)`, 60, 630)
+        text(`Car Position: (${round(this.current.pos.x)}, ${round(this.current.pos.y)})`, 60, 630)
         text(`Car Score: ${this.current.collected.size}`, 60, 670)
         text(`Car Fitness: ${this.current.getFitness()}`, 60, 710)
         text(`Time: x.xxx`, 60, 750)
