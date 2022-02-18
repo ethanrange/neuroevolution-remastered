@@ -36,69 +36,73 @@ function drawBackground() {
   }
 }
 
-function draw() {
-  drawBackground();
+function readControls(): [number, p5.Vector] {
+  let steering = keyIsDown(LEFT_ARROW) ? -0.05 : keyIsDown(RIGHT_ARROW) ? 0.05 : 0
+  let accel = keyIsDown(UP_ARROW) ? 1 : keyIsDown(DOWN_ARROW) ? -1 : 0
 
-  fill(color(50));
-  noStroke();
-  circle(mouseX, mouseY, 25);
+  return [steering, createVector(0, accel)]
+}
 
-  let steering = 0;
+function handleMovement(car: Car) {
+  // Update control input
+  let [steering, force] = readControls();
+  car.applyForce(force.rotate(car.angle - PI / 2))
+  car.angle += steering
 
-  if (keyIsDown(LEFT_ARROW)) {
-    steering = -0.05
-  } else if (keyIsDown(RIGHT_ARROW)) {
-    steering = 0.05
-  }
+  // Move and display car
+  car.move()
+  car.show()
+}
 
-  let accel = 0;
-
-  if (keyIsDown(UP_ARROW)) {
-    accel = 1
-  } else if (keyIsDown(DOWN_ARROW)) {
-    accel = -1
-  }
-
-  let force = createVector(0, accel)
-  simulation.current.applyForce(force.rotate(simulation.current.angle - PI / 2))
-  simulation.current.angle += steering
-
-  simulation.current.move()
-
-  simulation.displayGenerationInfo()
-  simulation.displayNetworkInfo(1010, 20)
-  simulation.displayTrack()
-
-  simulation.current.show()
-
-  let collide = simulation.current.panels.filter(p =>
-    simulation.track.walls.filter(w => p.intersect(w)).length > 0)
-
-  if (collide.length) {
+function handleIntersections(car: Car): boolean {
+  // Reset the run if a wall is collided with
+  if (car.panels.filter(p => simulation.track.walls.filter(w =>
+    p.intersect(w)).length > 0).length) {
     simulation.reset()
-    return
+    return true;
   }
 
-  simulation.current.panels.forEach(p => simulation.track.checkpoints.forEach(cp => {
-      if (p.intersect(cp)) {
-        simulation.current.collected = simulation.current.collected.add(cp.id)
-    }}))
+  // Store a set of contacted checkpoints
+  car.panels.forEach(p => simulation.track.checkpoints.forEach(cp => {
+    if (p.intersect(cp)) {
+      car.collected = car.collected.add(cp.id)
+    }
+  }))
 
-  for (let sensor of simulation.current.sensors) {
+  // Draw sensors to the nearest wall in each direction
+  for (let sensor of car.sensors) {
     let intersections = simulation.track.walls.map(w => sensor.intersect(w)).filter(i => i)
 
     if (intersections.length) {
-      let [closest, dist] = intersections.map(i => [i, p5.Vector.dist(simulation.current.pos, i)])
+      let [closest, dist] = intersections.map(i => [i, p5.Vector.dist(car.pos, i)])
         .reduce(([min, md], [nxt, nd]) => (md < nd ? [min, md] : [nxt, nd])) as [p5.Vector, number]
 
       sensor.show(closest, dist)
     }
   }
 
-  simulation.current.panels.forEach(p => { 
-    if (p.intersect(simulation.track.finish) && 
-      simulation.current.collected.size == simulation.track.checkpoints.length) {
-        console.log("Success!");
-        simulation.reset();
-  }})
+  // Reset run on successful completion
+  car.panels.forEach(p => {
+    if (p.intersect(simulation.track.finish) &&
+      car.collected.size == simulation.track.checkpoints.length) {
+      console.log("Success!");
+      simulation.reset();
+      return true;
+    }
+  })
+
+  return false;
+}
+
+function draw() {
+  drawBackground();
+
+  // Display information data and track
+  simulation.displayGenerationInfo()
+  simulation.displayNetworkInfo(1010, 20)
+  simulation.displayTrack()
+
+  handleMovement(simulation.current);
+
+  if (handleIntersections(simulation.current)) return;
 }
