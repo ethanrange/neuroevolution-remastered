@@ -95,5 +95,10 @@ function draw() {
     }
   }
 
-
+  simulation.current.panels.forEach(p => { 
+    if (p.intersect(simulation.track.finish) && 
+      simulation.current.collected.size == simulation.track.checkpoints.length) {
+        console.log("Success!");
+        simulation.reset();
+  }})
 }

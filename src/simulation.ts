@@ -18,11 +18,13 @@ class Simulation {
     }
 
     reset() {
-        this.current.pos = createVector(412, 717)
-        this.current.vel = createVector(0, 0)
-        this.current.acc = createVector(0, 0)
+        this.current.pos = createVector(412, 717);
+        this.current.vel = createVector(0, 0);
+        this.current.acc = createVector(0, 0);
 
-        this.current.angle = radians(10)
+        this.current.angle = radians(10);
+
+        this.current.collected = new Set();
     }
 
     displayTrack() {
@@ -50,7 +52,7 @@ class Simulation {
 
         // Information text
         text(`Generation number: ${this.generation + 1}`, 15, 35);
-        text(`Best fitness: ${this.best.getFitness()} (${this.best.id})`, 320, 35);
+        text(`Best fitness: ${this.best.getFitness()} (${this.best.toString()})`, 320, 35);
 
         this.displayProgressBar();
         pop();
