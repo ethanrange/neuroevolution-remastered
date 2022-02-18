@@ -43,7 +43,7 @@ function draw() {
   noStroke();
   circle(mouseX, mouseY, 25);
 
-  let steering;
+  let steering = 0;
   
   if (keyIsDown(LEFT_ARROW)) {
     steering = -0.05

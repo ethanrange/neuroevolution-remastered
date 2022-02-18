@@ -1,3 +1,21 @@
+abstract class Intersectable {
+  static intersection(senSt: p5.Vector, senEnd: p5.Vector, wallSt: p5.Vector, wallEnd: p5.Vector) {
+    let [[x1, y1], [x2, y2]] = [wallSt.array(), wallEnd.array()]
+    let [[x3, y3], [x4, y4]] = [senSt.array(), senEnd.array()]
+
+    let denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+
+    if (denom != 0) {
+      let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
+      let u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom
+
+      if (t > 0 && t < 1 && u > 0 && u < 1) {
+        return createVector(x3 + u * (x4 - x3), y3 + u * (y4 - y3))
+      }
+    }
+  }
+}
+
 class Car {
   generation: number;
   id: number;
@@ -134,22 +152,9 @@ class Panel {
     pop()
   }
 
-  sense(wall: Wall): boolean {
-    let [x1, y1] = [wall.start.x, wall.start.y]
-    let [x2, y2] = [wall.end.x, wall.end.y]
-
-    let [x3, y3] = [this.owner.pos.x + this.start.x, this.owner.pos.y + this.start.y]
-    let [x4, y4] = [this.owner.pos.x + this.end.x, this.owner.pos.y + this.end.y]
-
-    let denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-
-    if (denom != 0) {
-      let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
-      let u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom
-
-      return (t > 0 && t < 1 && u > 0 && u < 1) 
-    }
-    
-    return false
+  intersect(wall: Wall): p5.Vector {
+    return Intersectable.intersection(wall.start, wall.end, 
+                                      p5.Vector.add(this.owner.pos, this.start), 
+                                      p5.Vector.add(this.owner.pos, this.end))
   }
 }
