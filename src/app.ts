@@ -5,7 +5,7 @@ import { Track, Wall, Checkpoint } from "./track.js"
 import { Car } from "./car.js"
 
 (globalThis as any).preload = function () {
-  let trackFiles: string[] = ['track1'];
+  let trackFiles: string[] = ["track1", "track2"];
   tracks = trackFiles.map(n => loadJSON(`src/resources/${n}.json`) as TrackStore)
 };
 
