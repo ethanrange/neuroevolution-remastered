@@ -58,7 +58,7 @@ function handleIntersections(car: Car): boolean {
   // Reset the run if a wall is collided with
   if (car.panels.filter(p => simulation.track.walls.filter(w =>
     p.intersect(w)).length > 0).length) {
-    simulation.reset()
+    car.reset()
     return true;
   }
 
@@ -86,7 +86,7 @@ function handleIntersections(car: Car): boolean {
     if (p.intersect(simulation.track.finish) &&
       car.collected.size == simulation.track.checkpoints.length) {
       console.log("Success!");
-      simulation.reset();
+      car.reset();
       return true;
     }
   })

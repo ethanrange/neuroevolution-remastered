@@ -55,13 +55,22 @@ class Car {
     return this.collected.size ** 2;
   }
 
+  reset() {
+    this.pos = createVector(412, 717);
+    this.vel = createVector(0, 0);
+    this.acc = createVector(0, 0);
+
+    this.angle = radians(10);
+
+    this.collected = new Set();
+  }
+
   show() {
     push()
     translate(this.pos.x, this.pos.y);
     rotate(this.angle);
 
     this.panels.forEach(p => p.show())
-    circle(0, 0, 5)
 
     stroke(0)
     strokeWeight(1)

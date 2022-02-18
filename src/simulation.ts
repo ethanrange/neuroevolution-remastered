@@ -17,16 +17,6 @@ class Simulation {
         this.track = track;
     }
 
-    reset() {
-        this.current.pos = createVector(412, 717);
-        this.current.vel = createVector(0, 0);
-        this.current.acc = createVector(0, 0);
-
-        this.current.angle = radians(10);
-
-        this.current.collected = new Set();
-    }
-
     displayTrack() {
         this.track.checkpoints.forEach(cp => cp.show())
         this.track.finish.show()
