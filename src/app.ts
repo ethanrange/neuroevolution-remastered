@@ -69,12 +69,7 @@ function draw() {
     simulation.track.walls.filter(w => p.intersect(w)).length > 0)
   
   if (collide.length) {
-    simulation.current.pos = createVector(412, 717)
-    simulation.current.vel = createVector(0, 0)
-    simulation.current.acc = createVector(0, 0)
-
-    simulation.current.angle = radians(10)
-
+    simulation.reset()
     return
   }
 
