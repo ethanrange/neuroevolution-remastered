@@ -1,7 +1,7 @@
 abstract class Intersectable {
-  static intersection(senSt: p5.Vector, senEnd: p5.Vector, wallSt: p5.Vector, wallEnd: p5.Vector) {
-    let [[x1, y1], [x2, y2]] = [wallSt.array(), wallEnd.array()]
-    let [[x3, y3], [x4, y4]] = [senSt.array(), senEnd.array()]
+  static intersection(sSt: p5.Vector, sEnd: p5.Vector, wSt: p5.Vector, wEnd: p5.Vector, inf: boolean) {
+    let [[x1, y1], [x2, y2]] = [wSt.array(), wEnd.array()]
+    let [[x3, y3], [x4, y4]] = [sSt.array(), sEnd.array()]
 
     let denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
 
@@ -9,7 +9,7 @@ abstract class Intersectable {
       let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
       let u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom
 
-      if (t > 0 && t < 1 && u > 0 && u < 1) {
+      if (t >= 0 && t <= 1 && u >= 0 && (u <= 1 || inf)) {
         return createVector(x3 + u * (x4 - x3), y3 + u * (y4 - y3))
       }
     }
@@ -109,13 +109,11 @@ class Car {
 }
 class Sensor {
   owner: Car;
-  direction: p5.Vector;
   spacing: number;
 
   constructor(owner: Car, spacing: number) {
     this.owner = owner;
     this.spacing = spacing;
-    this.direction = p5.Vector.fromAngle(spacing)
   }
 
   show() {
@@ -127,6 +125,12 @@ class Sensor {
     line(0, 0, 100, 100)
 
     pop()
+  }
+
+  intersect(wall: Wall): p5.Vector {
+    let direction = p5.Vector.fromAngle(this.spacing - PI / 2).rotate(this.owner.angle)
+    return Intersectable.intersection(this.owner.pos, p5.Vector.add(this.owner.pos, direction), 
+                                      wall.start, wall.end,  true)
   }
 }
 
@@ -153,8 +157,11 @@ class Panel {
   }
 
   intersect(wall: Wall): p5.Vector {
-    return Intersectable.intersection(wall.start, wall.end, 
-                                      p5.Vector.add(this.owner.pos, this.start), 
-                                      p5.Vector.add(this.owner.pos, this.end))
+    let [stRot, endRot] = [this.start.copy().rotate(this.owner.angle), 
+                           this.end.copy().rotate(this.owner.angle)]
+
+    return Intersectable.intersection(p5.Vector.add(this.owner.pos, stRot), 
+                                         p5.Vector.add(this.owner.pos, endRot),
+                                          wall.start, wall.end, false)
   }
 }

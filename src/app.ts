@@ -51,7 +51,13 @@ function draw() {
     steering = 0.05
   }
 
-  let accel = keyIsDown(UP_ARROW) ? 1 : 0
+  let accel = 0;
+  
+  if (keyIsDown(UP_ARROW)) {
+    accel = 1
+  } else if (keyIsDown(DOWN_ARROW)) {
+    accel = -1
+  }
 
   let force = createVector(0, accel)
   simulation.current.applyForce(force.rotate(simulation.current.angle - PI / 2))
@@ -60,9 +66,9 @@ function draw() {
   simulation.current.move()
 
   let collide = simulation.current.panels.filter(p => 
-    simulation.track.walls.filter(w => p.intersect(w)).length > 0).length > 0
+    simulation.track.walls.filter(w => p.intersect(w)).length > 0)
   
-  if (collide) {
+  if (collide.length) {
     simulation.current.pos = createVector(412, 717)
     simulation.current.vel = createVector(0, 0)
     simulation.current.acc = createVector(0, 0)
@@ -70,6 +76,17 @@ function draw() {
     simulation.current.angle = radians(10)
 
     return
+  }
+
+  for (let sensor of simulation.current.sensors) {
+    let intersections = simulation.track.walls.map(w => sensor.intersect(w)).filter(i => i)
+
+    if (intersections.length) {
+      push()
+      fill(255, 0, 0)
+      intersections.forEach(i => circle(i.x, i.y, 10))
+      pop()
+    }
   }
 
   simulation.current.show()
