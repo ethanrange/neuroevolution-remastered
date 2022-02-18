@@ -79,6 +79,11 @@ function draw() {
     return
   }
 
+  simulation.current.panels.forEach(p => simulation.track.checkpoints.forEach(cp => {
+      if (p.intersect(cp)) {
+        simulation.current.collected = simulation.current.collected.add(cp.id)
+    }}))
+
   for (let sensor of simulation.current.sensors) {
     let intersections = simulation.track.walls.map(w => sensor.intersect(w)).filter(i => i)
 
@@ -89,4 +94,6 @@ function draw() {
       sensor.show(closest, dist)
     }
   }
+
+
 }

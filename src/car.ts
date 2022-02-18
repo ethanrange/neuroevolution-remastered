@@ -20,7 +20,8 @@ class Car {
   generation: number;
   id: number;
   network: Network;
-  fitness: number;
+
+  collected: Set<number>
 
   pos: p5.Vector;
   vel: p5.Vector;
@@ -37,7 +38,7 @@ class Car {
     this.id = id;
     this.network = network;
 
-    this.fitness = 0;
+    this.collected = new Set();
 
     this.pos = start;
     this.vel = createVector(0, 0);
@@ -48,6 +49,10 @@ class Car {
 
     this.sensors = this.generateSensors(sensors)
     this.panels = this.generatePanels()
+  }
+
+  getFitness() {
+    return this.collected.size ** 2;
   }
 
   show() {

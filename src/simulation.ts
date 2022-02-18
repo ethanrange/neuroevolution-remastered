@@ -50,7 +50,7 @@ class Simulation {
 
         // Information text
         text(`Generation number: ${this.generation + 1}`, 15, 35);
-        text(`Best fitness: ${this.best.fitness} (${this.best.id})`, 320, 35);
+        text(`Best fitness: ${this.best.getFitness()} (${this.best.id})`, 320, 35);
 
         this.displayProgressBar();
         pop();
@@ -101,8 +101,8 @@ class Simulation {
         text(`Current car number: ${this.current.id}`, 60, 510)
         text(`Current car ID: ${this.current.toString()}`, 60, 550)
         text(`Car Position: (x, y)`, 60, 630)
-        text(`Car Score: ${this.current.fitness}`, 60, 670)
-        text(`Car Fitness: ${this.current.fitness}`, 60, 710)
+        text(`Car Score: ${this.current.collected.size}`, 60, 670)
+        text(`Car Fitness: ${this.current.getFitness()}`, 60, 710)
         text(`Time: x.xxx`, 60, 750)
 
         pop()
