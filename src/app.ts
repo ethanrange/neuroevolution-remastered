@@ -1,18 +1,19 @@
-let simulation: Simulation;
-let tracks: TrackStore[];
+import {} from "p5/global";
 
-interface TrackStore {
-  "finish": number[]
-  "walls": number[][];
-  "cps": number[][];
-}
+import { Simulation, populationSim } from "./simulation.js"
+import { Track, Wall, Checkpoint } from "./track.js"
+import { Car } from "./car.js"
 
-function preload() {
+(globalThis as any).preload = function () {
   let trackFiles: string[] = ['track1'];
   tracks = trackFiles.map(n => loadJSON(`src/resources/${n}.json`) as TrackStore)
-}
+};
 
-function setup() {
+(globalThis as any).windowResized = function () {
+  resizeCanvas(windowWidth, windowHeight);
+};
+
+(globalThis as any).setup = function () {
   console.log("Program initialised");
 
   createCanvas(windowWidth, windowHeight);
@@ -20,10 +21,28 @@ function setup() {
   frameRate(60);
 
   simulation = populationSim(new Track(0), 1);
-}
+};
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+(globalThis as any).draw = function () {
+  drawBackground();
+
+  // Display information data and track
+  simulation.displayGenerationInfo()
+  simulation.displayNetworkInfo(1010, 20)
+  simulation.displayTrack()
+
+  handleMovement(simulation.current);
+
+  if (handleIntersections(simulation.current)) return;
+};
+
+let simulation: Simulation;
+export let tracks: TrackStore[];
+
+interface TrackStore {
+  "finish": number[]
+  "walls": number[][];
+  "cps": number[][];
 }
 
 function drawBackground() {
@@ -56,14 +75,14 @@ function handleMovement(car: Car) {
 
 function handleIntersections(car: Car): boolean {
   // Reset the run if a wall is collided with
-  if (car.panels.filter(p => simulation.track.walls.filter(w =>
+  if (car.panels.filter(p => simulation.track.walls.filter((w: Wall) =>
     p.intersect(w)).length > 0).length) {
     car.reset()
     return true;
   }
 
   // Store a set of contacted checkpoints
-  car.panels.forEach(p => simulation.track.checkpoints.forEach(cp => {
+  car.panels.forEach(p => simulation.track.checkpoints.forEach((cp: Checkpoint) => {
     if (p.intersect(cp)) {
       car.collected = car.collected.add(cp.id)
     }
@@ -71,7 +90,8 @@ function handleIntersections(car: Car): boolean {
 
   // Draw sensors to the nearest wall in each direction
   for (let sensor of car.sensors) {
-    let intersections = simulation.track.walls.map(w => sensor.intersect(w)).filter(i => i)
+    let intersections = simulation.track.walls.map((w: Wall) => 
+      sensor.intersect(w)).filter(i => i) as p5.Vector[]
 
     if (intersections.length) {
       let [closest, dist] = intersections.map(i => [i, p5.Vector.dist(car.pos, i)])
@@ -92,17 +112,4 @@ function handleIntersections(car: Car): boolean {
   })
 
   return false;
-}
-
-function draw() {
-  drawBackground();
-
-  // Display information data and track
-  simulation.displayGenerationInfo()
-  simulation.displayNetworkInfo(1010, 20)
-  simulation.displayTrack()
-
-  handleMovement(simulation.current);
-
-  if (handleIntersections(simulation.current)) return;
 }

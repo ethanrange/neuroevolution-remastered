@@ -1,4 +1,8 @@
-class Simulation {
+import { Car } from "./car.js"
+import { Track } from "./track.js"
+import { Network } from "./network.js"
+
+export class Simulation {
     generation: number;
     population: Car[];
 
@@ -104,13 +108,13 @@ class Simulation {
     }
 }
 
-function populationSim(track: Track, size: number) {
+export function populationSim(track: Track, size: number) {
     console.assert(size != 0)
     let population = new Array(size).fill(null).map((_, i) => 
         new Car(1, i, new Network(), createVector(412, 717), 7))
     return new Simulation(track, population)
 }
 
-function networkSim(track: Track, network: Network) {
+export function networkSim(track: Track, network: Network) {
     return new Simulation(track, [new Car(1, 1, network, createVector(412, 717), 7)])
 }

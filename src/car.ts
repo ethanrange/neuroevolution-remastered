@@ -1,3 +1,6 @@
+import { Network } from "./network.js"
+import { Wall } from "./track.js"
+
 abstract class Intersectable {
   static intersection(sSt: p5.Vector, sEnd: p5.Vector, wSt: p5.Vector, wEnd: p5.Vector, inf: boolean) {
     let [[x1, y1], [x2, y2]] = [wSt.array(), wEnd.array()]
@@ -16,7 +19,7 @@ abstract class Intersectable {
   }
 }
 
-class Car {
+export class Car {
   generation: number;
   id: number;
   network: Network;
@@ -86,7 +89,8 @@ class Car {
 
     this.vel.limit(5)
 
-    let drag = p5.Vector.mult(this.vel, -0.05)
+    let drag = createVector(0, 0)
+    p5.Vector.mult(this.vel, -0.05, drag)
     this.applyForce(drag)
   }
 
@@ -117,7 +121,7 @@ class Car {
     return `${this.generation}:${this.id}`
   }
 }
-class Sensor {
+export class Sensor {
   owner: Car;
   spacing: number;
 
@@ -141,14 +145,14 @@ class Sensor {
     pop()
   }
 
-  intersect(wall: Wall): p5.Vector {
+  intersect(wall: Wall): p5.Vector | undefined {
     let direction = p5.Vector.fromAngle(this.spacing - PI / 2).rotate(this.owner.angle)
     return Intersectable.intersection(this.owner.pos, p5.Vector.add(this.owner.pos, direction), 
                                       wall.start, wall.end,  true)
   }
 }
 
-class Panel {
+export class Panel {
   start: p5.Vector;
   end: p5.Vector;
 
@@ -170,7 +174,7 @@ class Panel {
     pop()
   }
 
-  intersect(wall: Wall): p5.Vector {
+  intersect(wall: Wall): p5.Vector | undefined {
     let [stRot, endRot] = [this.start.copy().rotate(this.owner.angle), 
                            this.end.copy().rotate(this.owner.angle)]
 

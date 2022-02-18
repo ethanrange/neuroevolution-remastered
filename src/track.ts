@@ -1,4 +1,6 @@
-class Track {
+import { tracks } from "./app.js"
+
+export class Track {
   id: number;
 
   walls: Wall[];
@@ -19,7 +21,7 @@ class Track {
   }
 }
 
-class Wall {
+export class Wall {
   start: p5.Vector;
   end: p5.Vector;
   colour: p5.Color;
@@ -39,7 +41,7 @@ class Wall {
   }
 }
 
-class Checkpoint extends Wall {
+export class Checkpoint extends Wall {
   id: number;
 
   constructor(start: p5.Vector, end: p5.Vector, colour: p5.Color, id: number) {
