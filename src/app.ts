@@ -1,6 +1,9 @@
 let simulation: Simulation;
 let tracks: TrackStore[];
 
+let force: p5.Vector;
+let steering: number = 0, accel: number = 0;
+
 interface TrackStore {
   "finish": number[]
   "walls": number[][];
@@ -43,9 +46,28 @@ function draw() {
   noStroke();
   circle(mouseX, mouseY, 25);
 
+  let force = createVector(0, accel)
+  simulation.current.applyForce(force.rotate(simulation.current.angle - PI / 2))
+  simulation.current.angle += steering
+
+  simulation.current.move()
+  simulation.current.show()
+
+  if (keyIsDown(LEFT_ARROW)) {
+    steering = -0.05
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    steering = 0.05
+  } else {
+    steering = 0
+  }
+
+  if (keyIsDown(UP_ARROW)) {
+    accel = 1
+  } else {
+    accel = 0
+  }
+
   simulation.displayGenerationInfo()
   simulation.displayNetworkInfo(1010, 20)
   simulation.displayTrack()
-
-  simulation.current.show()
 }

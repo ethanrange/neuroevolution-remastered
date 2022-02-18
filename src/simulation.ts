@@ -11,7 +11,8 @@ class Simulation {
         this.generation = 0;
         this.population = population;
 
-        this.current = this.best = this.population[0];
+        this.current = this.population[0];
+        this.best = this.population[0];
 
         this.track = track;
     }

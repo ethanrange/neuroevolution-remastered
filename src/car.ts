@@ -22,7 +22,8 @@ class Car {
         this.fitness = 0;
 
         this.pos = start;
-        this.vel = this.acc = createVector(0, 0);
+        this.vel = createVector(0, 0);
+        this.acc = createVector(0, 0);
 
         this.dims = createVector(20, 30)
         this.angle = radians(10)
