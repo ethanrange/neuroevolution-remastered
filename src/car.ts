@@ -62,10 +62,6 @@ class Car {
     strokeWeight(1)
 
     line(0, 0, this.dims.y / 2 + 5, 0);
-
-    rotate(-3 * PI / 4);
-    this.sensors.forEach(s => s.show());
-
     pop()
   }
 
@@ -116,13 +112,17 @@ class Sensor {
     this.spacing = spacing;
   }
 
-  show() {
+  show(closest: p5.Vector, dist: number) {
     push()
-    stroke(0)
+    stroke(0, 100)
     strokeWeight(1)
 
-    rotate(this.spacing)
-    line(0, 0, 100, 100)
+    fill(255, 0, 0)
+    line(this.owner.pos.x, this.owner.pos.y, closest.x, closest.y)
+    circle(closest.x, closest.y, 8)
+
+    fill(0)
+    text(round(dist), closest.x + 8, closest.y + 5)
 
     pop()
   }

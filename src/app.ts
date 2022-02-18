@@ -27,7 +27,7 @@ function windowResized() {
 }
 
 function drawBackground() {
-  let c1: p5.Color = color(63, 191, 191),  c2: p5.Color = color(200, 230, 255);
+  let c1: p5.Color = color(63, 191, 191), c2: p5.Color = color(200, 230, 255);
 
   for (let y = 0; y < height; y++) {
     let normY = map(y, 0, height, 0, 1);
@@ -44,7 +44,7 @@ function draw() {
   circle(mouseX, mouseY, 25);
 
   let steering = 0;
-  
+
   if (keyIsDown(LEFT_ARROW)) {
     steering = -0.05
   } else if (keyIsDown(RIGHT_ARROW)) {
@@ -52,7 +52,7 @@ function draw() {
   }
 
   let accel = 0;
-  
+
   if (keyIsDown(UP_ARROW)) {
     accel = 1
   } else if (keyIsDown(DOWN_ARROW)) {
@@ -65,9 +65,15 @@ function draw() {
 
   simulation.current.move()
 
-  let collide = simulation.current.panels.filter(p => 
+  simulation.displayGenerationInfo()
+  simulation.displayNetworkInfo(1010, 20)
+  simulation.displayTrack()
+
+  simulation.current.show()
+
+  let collide = simulation.current.panels.filter(p =>
     simulation.track.walls.filter(w => p.intersect(w)).length > 0)
-  
+
   if (collide.length) {
     simulation.reset()
     return
@@ -77,16 +83,10 @@ function draw() {
     let intersections = simulation.track.walls.map(w => sensor.intersect(w)).filter(i => i)
 
     if (intersections.length) {
-      push()
-      fill(255, 0, 0)
-      intersections.forEach(i => circle(i.x, i.y, 10))
-      pop()
+      let [closest, dist] = intersections.map(i => [i, p5.Vector.dist(simulation.current.pos, i)])
+        .reduce(([min, md], [nxt, nd]) => (md < nd ? [min, md] : [nxt, nd])) as [p5.Vector, number]
+
+      sensor.show(closest, dist)
     }
   }
-
-  simulation.current.show()
-
-  simulation.displayGenerationInfo()
-  simulation.displayNetworkInfo(1010, 20)
-  simulation.displayTrack()
 }
