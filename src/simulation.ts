@@ -27,6 +27,17 @@ export class Simulation {
         this.track = track;
     }
 
+    newGeneration() {
+        console.log(`Completed Generation ${this.generation}`)
+        this.generation += 1
+
+        let meanFitness = this.results.reduce((sum, c) => sum + c.getFitness(), 0) / this.popSize
+        console.log(`Mean fitness: ${meanFitness}\n`)
+
+        this.population = createPopulation(this.popSize, this.generation)
+        this.results = []
+    }
+
     displayTrack() {
         this.track.checkpoints.forEach(cp => cp.show())
         this.track.finish.show()
@@ -114,11 +125,14 @@ export class Simulation {
     }
 }
 
+function createPopulation(size: number, generation: number) {
+  return new Array(size).fill(null).map((_, i) => 
+    new Car(generation, i, new Network([7, 5, 5, 2]), createVector(412, 717), 7))
+}
+
 export function populationSim(track: Track, size: number) {
     console.assert(size != 0)
-    let population = new Array(size).fill(null).map((_, i) => 
-        new Car(1, i, new Network([7, 5, 5, 2]), createVector(412, 717), 7))
-    return new Simulation(track, population)
+    return new Simulation(track, createPopulation(size, 1))
 }
 
 export function networkSim(track: Track, network: Network) {

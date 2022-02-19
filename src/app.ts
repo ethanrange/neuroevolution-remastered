@@ -51,7 +51,7 @@ const POPULATION_SIZE = 50;
 
   // Generation is complete
   if (!simulation.population.length) {
-    console.log(`Completed Generation ${simulation.generation}`)
+    simulation.newGeneration();
   }
 };
 
