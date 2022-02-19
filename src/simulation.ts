@@ -111,7 +111,7 @@ export class Simulation {
 export function populationSim(track: Track, size: number) {
     console.assert(size != 0)
     let population = new Array(size).fill(null).map((_, i) => 
-        new Car(1, i, new Network(), createVector(412, 717), 7))
+        new Car(1, i, new Network([7, 5, 5, 2]), createVector(412, 717), 7))
     return new Simulation(track, population)
 }
 

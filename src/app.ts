@@ -21,6 +21,7 @@ import { Car } from "./car.js"
   frameRate(60);
 
   simulation = populationSim(new Track(0), 1);
+  console.log("Simulation created: ", simulation)
 };
 
 (globalThis as any).draw = function () {
