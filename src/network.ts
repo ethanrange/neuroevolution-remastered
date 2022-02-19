@@ -4,7 +4,6 @@ declare const mlMatrix: typeof ml;
 const { Matrix } = mlMatrix;
 
 export class Network {
-    id: number = 0;
     weights: ml.Matrix[];
     biases: ml.Matrix[]; 
     zipped: [ml.Matrix, ml.Matrix][]
@@ -29,11 +28,22 @@ export class Network {
 
     feedforward(inputs: number[]): number[] {
         let input = Matrix.columnVector(inputs)
+        let res = this.zipped.reduce((acc, [w, b]) => apply(w.mmul(acc).add(b), leakyReLu), input)
 
-        let result = this.zipped.reduce((acc, [w, b]) => w.mmul(acc).add(b), input)
+        console.assert(res.isColumnVector())
 
-        console.assert(result.isColumnVector())
-
-        return result.getColumn(0)
+        return apply(res, sigmoid).getColumn(0)
     }
+}
+
+function apply(input: ml.Matrix, func: (v: number) => number): ml.Matrix {
+    return new Matrix(input.to2DArray().map(r => r.map(func)))
+}
+
+function sigmoid(v: number): number {
+    return 1 / (1 + exp(-v))
+}
+
+function leakyReLu(v: number): number {
+    return v >= 0 ? v : v / 20;
 }
