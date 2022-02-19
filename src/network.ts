@@ -8,18 +8,11 @@ export class Network {
     biases: ml.Matrix[]; 
     zipped: [ml.Matrix, ml.Matrix][]
 
-    constructor(structure: number[]) {
-        let transfers = structure.length - 1;
-        this.weights = Array(transfers);
-        this.biases = Array(transfers);
+    constructor(weights: ml.Matrix[], biases: ml.Matrix[]) {
+        this.weights = weights;
+        this.biases = biases;
 
-        for (let i = 0; i < structure.length - 1; i++) {
-            this.weights[i] = Matrix.rand(structure[i + 1], structure[i], 
-                { random: () => random(-1, 1)});
-            this.biases[i] = Matrix.ones(structure[i + 1], 1);
-        }
-
-        this.zipped = this.weights.map((w, i) => [w, this.biases[i]])
+        this.zipped = weights.map((w, i) => [w, biases[i]])
     }
 
     display() {
@@ -34,6 +27,10 @@ export class Network {
 
         return apply(res, sigmoid).getColumn(0)
     }
+
+    mutateWeights(mutation: (w: number) => number) {
+        this.weights = this.weights.map(w => apply(w, mutation))
+    }
 }
 
 function apply(input: ml.Matrix, func: (v: number) => number): ml.Matrix {
@@ -46,4 +43,17 @@ function sigmoid(v: number): number {
 
 function leakyReLu(v: number): number {
     return v >= 0 ? v : v / 20;
+}
+
+export function networkFromStructure(structure: number[]): Network {
+    let transfers = structure.length - 1;
+    let weights = Array(transfers);
+    let biases = Array(transfers);
+
+    for (let i = 0; i < structure.length - 1; i++) {
+        weights[i] = Matrix.rand(structure[i + 1], structure[i], { random: () => random(-1, 1)});
+        biases[i] = Matrix.ones(structure[i + 1], 1);
+    }
+
+    return new Network(weights, biases);
 }

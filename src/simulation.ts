@@ -1,6 +1,7 @@
 import { Car } from "./car.js"
 import { Track } from "./track.js"
-import { Network } from "./network.js"
+import { Network, networkFromStructure } from "./network.js"
+import { Genetic } from "./genetic.js";
 
 export class Simulation {
     generation: number;
@@ -34,7 +35,7 @@ export class Simulation {
         let meanFitness = this.results.reduce((sum, c) => sum + c.getFitness(), 0) / this.popSize
         console.log(`Mean fitness: ${meanFitness}\n`)
 
-        this.population = createPopulation(this.popSize, this.generation)
+        this.population = Genetic.generateChildren(this.results, this.generation)
         this.results = []
     }
 
@@ -127,7 +128,7 @@ export class Simulation {
 
 function createPopulation(size: number, generation: number) {
   return new Array(size).fill(null).map((_, i) => 
-    new Car(generation, i, new Network([7, 5, 5, 2]), createVector(412, 717), 7))
+    new Car(generation, i, networkFromStructure([7, 5, 5, 2]), createVector(412, 717), 7))
 }
 
 export function populationSim(track: Track, size: number) {
