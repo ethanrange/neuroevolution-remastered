@@ -4,7 +4,10 @@ import { Network } from "./network.js"
 
 export class Simulation {
     generation: number;
+
     population: Car[];
+    popSize: number;
+    results: Car[];
 
     current: Car;
     best: Car;
@@ -13,7 +16,10 @@ export class Simulation {
 
     constructor(track: Track, population: Car[]) {
         this.generation = 0;
+
+        this.popSize = population.length;
         this.population = population;
+        this.results = [];
 
         this.current = this.population[0];
         this.best = this.population[0];
@@ -62,7 +68,7 @@ export class Simulation {
         rect(750, 13, 200, 25);
         pop();
 
-        let barWidth = (200.0 / this.population.length) * (this.current.id + 1);
+        let barWidth = (1 - this.population.length / this.popSize) * 200;
         rect(750, 13, barWidth, 25);
     }
 

@@ -4,6 +4,8 @@ import { Simulation, populationSim } from "./simulation.js"
 import { Track, Wall, Checkpoint } from "./track.js"
 import { Car } from "./car.js"
 
+const POPULATION_SIZE = 50;
+
 (globalThis as any).preload = function () {
   let trackFiles: string[] = ["track1", "track2"];
   tracks = trackFiles.map(n => loadJSON(`src/resources/${n}.json`) as TrackStore)
@@ -20,7 +22,7 @@ import { Car } from "./car.js"
   rectMode(CORNER);
   frameRate(60);
 
-  simulation = populationSim(new Track(0), 1);
+  simulation = populationSim(new Track(0), POPULATION_SIZE);
   console.log("Simulation created: ", simulation)
 };
 
@@ -32,10 +34,24 @@ import { Car } from "./car.js"
   simulation.displayNetworkInfo(1010, 20)
   simulation.displayTrack()
 
-  let readings = handleIntersections(simulation.current)
+  simulation.population.slice(0, 5).forEach(rc => {
+    let readings = handleIntersections(rc)
   
-  if (readings) {
-    handleMovement(simulation.current, readings);
+    if (readings) {
+      handleMovement(rc, readings);
+    } else {
+      if (rc.getFitness() > simulation.best.getFitness()) {
+        simulation.best = rc
+      }
+
+      simulation.population = simulation.population.filter(pc => pc != rc)
+      simulation.results.push(rc)
+    }
+  })
+
+  // Generation is complete
+  if (!simulation.population.length) {
+    console.log(`Completed Generation ${simulation.generation}`)
   }
 };
 
@@ -91,7 +107,6 @@ function handleIntersections(car: Car): number[] | undefined {
   // Reset the run if a wall is collided with
   if (car.panels.filter(p => simulation.track.walls.filter((w: Wall) =>
     p.intersect(w)).length > 0).length) {
-    car.reset()
     return;
   }
 
@@ -125,7 +140,6 @@ function handleIntersections(car: Car): number[] | undefined {
     if (p.intersect(simulation.track.finish) &&
       car.collected.size == simulation.track.checkpoints.length) {
       console.log("Success!");
-      car.reset();
       return;
     }
   })
