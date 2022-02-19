@@ -21,7 +21,8 @@ export class Network {
 
     feedforward(inputs: number[]): number[] {
         let input = Matrix.columnVector(inputs)
-        let res = this.zipped.reduce((acc, [w, b]) => apply(w.mmul(acc).add(b), leakyReLu), input)
+        let res = this.zipped.reduce((acc, [w, b], i) => apply(w.mmul(acc).add(b), 
+            i < this.weights.length - 1 ? leakyReLu : n => n), input)
 
         console.assert(res.isColumnVector())
 
@@ -30,6 +31,7 @@ export class Network {
 
     mutateWeights(mutation: (w: number) => number) {
         this.weights = this.weights.map(w => apply(w, mutation))
+        this.zipped = this.weights.map((w, i) => [w, this.biases[i]])
     }
 }
 
