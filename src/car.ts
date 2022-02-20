@@ -36,6 +36,8 @@ export class Car {
   sensors: Sensor[];
   panels: Panel[];
 
+  elapsed: number;
+
   constructor(generation: number, id: number, network: Network, start: p5.Vector, sensors: number) {
     this.generation = generation;
     this.id = id;
@@ -52,6 +54,8 @@ export class Car {
 
     this.sensors = this.generateSensors(sensors)
     this.panels = this.generatePanels()
+
+    this.elapsed = 0 
   }
 
   getFitness() {
@@ -66,6 +70,8 @@ export class Car {
     this.angle = radians(10);
 
     this.collected = new Set();
+
+    this.elapsed = 0;
   }
 
   show() {

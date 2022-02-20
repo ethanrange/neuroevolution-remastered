@@ -35,9 +35,11 @@ const POPULATION_SIZE = 50;
   simulation.displayTrack()
 
   simulation.population.slice(0, 5).forEach(rc => {
+    rc.elapsed += deltaTime;
+    
     let readings = handleIntersections(rc)
   
-    if (readings) {
+    if (readings && rc.elapsed / 1000 < 5 + rc.collected.size) {
       handleMovement(rc, readings);
     } else {
       if (rc.getFitness() > simulation.best.getFitness()) {
