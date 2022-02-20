@@ -10,10 +10,10 @@ export class Track {
   constructor(id: number) {
     this.id = id;
 
-    this.walls = tracks[id]["walls"].map(v => new Wall(...Track.toVecs(v), color(0)));
-    this.finish = new Wall(...Track.toVecs(tracks[id]["finish"]), color(0, 230, 0));
+    this.walls = tracks[id]["walls"].map(v => new Wall(Track.toVecs(v), color(0)));
+    this.finish = new Wall(Track.toVecs(tracks[id]["finish"]), color(0, 230, 0));
     this.checkpoints = tracks[id]["cps"].map((v, i) => 
-      new Checkpoint(...Track.toVecs(v), color(255, 0, 255), i));
+      new Checkpoint(Track.toVecs(v), color(255, 0, 255), i));
   }
 
   static toVecs(ps: number[]): [p5.Vector, p5.Vector] {
@@ -26,7 +26,7 @@ export class Wall {
   end: p5.Vector;
   colour: p5.Color;
 
-  constructor(start: p5.Vector, end: p5.Vector, colour: p5.Color) {
+  constructor([start, end]: [p5.Vector, p5.Vector], colour: p5.Color) {
     this.start = start;
     this.end = end;
     this.colour = colour;
@@ -44,8 +44,8 @@ export class Wall {
 export class Checkpoint extends Wall {
   id: number;
 
-  constructor(start: p5.Vector, end: p5.Vector, colour: p5.Color, id: number) {
-    super(start, end, colour);
+  constructor(points: [p5.Vector, p5.Vector], colour: p5.Color, id: number) {
+    super(points, colour);
     this.id = id;
   }
 }
