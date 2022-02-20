@@ -22,6 +22,9 @@ globalThis.setup = function () {
   rectMode(CORNER);
   frameRate(60);
 
+  concurrent = createSlider(1, POPULATION_SIZE, 5);
+  concurrent.position(50, 13);
+
   simulation = populationSim(new Track(0), POPULATION_SIZE);
   console.log("Simulation created: ", simulation);
 };
@@ -29,12 +32,19 @@ globalThis.setup = function () {
 globalThis.draw = function () {
   drawBackground();
 
+  push();
+  textSize(25);
+  fill(0);
+  noStroke();
+  text(round(frameRate()), 10, 30);
+  pop();
+
   // Display information data and track
   simulation.displayGenerationInfo();
   simulation.displayNetworkInfo(1010, 20);
   simulation.displayTrack();
 
-  simulation.population.slice(0, 5).forEach(rc => {
+  simulation.population.slice(0, concurrent.value() as number).forEach(rc => {
     rc.elapsed += deltaTime;
 
     const readings = handleIntersections(rc);
@@ -57,7 +67,7 @@ globalThis.draw = function () {
   }
 };
 
-let simulation: Simulation;
+let simulation: Simulation, concurrent: p5.Element;
 export let tracks: TrackStore[];
 
 interface TrackStore {
