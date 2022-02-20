@@ -1,4 +1,4 @@
-import {} from "p5/global";
+import { } from "p5/global";
 
 import { Simulation, populationSim } from "./simulation.js"
 import { Track, Wall, Checkpoint } from "./track.js"
@@ -7,7 +7,7 @@ import { Car } from "./car.js"
 const POPULATION_SIZE = 50;
 
 (globalThis as any).preload = function () {
-  let trackFiles: string[] = ["track1", "track2"];
+  const trackFiles: string[] = ["track1", "track2"];
   tracks = trackFiles.map(n => loadJSON(`src/resources/${n}.json`) as TrackStore)
 };
 
@@ -36,9 +36,9 @@ const POPULATION_SIZE = 50;
 
   simulation.population.slice(0, 5).forEach(rc => {
     rc.elapsed += deltaTime;
-    
-    let readings = handleIntersections(rc)
-  
+
+    const readings = handleIntersections(rc)
+
     if (readings && rc.elapsed / 1000 < 5 + rc.collected.size) {
       handleMovement(rc, readings);
     } else {
@@ -67,26 +67,26 @@ interface TrackStore {
 }
 
 function drawBackground() {
-  let c1: p5.Color = color(63, 191, 191), c2: p5.Color = color(200, 230, 255);
+  const c1: p5.Color = color(63, 191, 191), c2: p5.Color = color(200, 230, 255);
 
   for (let y = 0; y < height; y++) {
-    let normY = map(y, 0, height, 0, 1);
+    const normY = map(y, 0, height, 0, 1);
     stroke(lerpColor(c1, c2, normY));
     line(0, y, width, y);
   }
 }
 
 function readControls(): [number, p5.Vector] {
-  let steering = keyIsDown(LEFT_ARROW) ? -0.05 : keyIsDown(RIGHT_ARROW) ? 0.05 : 0
-  let accel = keyIsDown(UP_ARROW) ? 1 : keyIsDown(DOWN_ARROW) ? -1 : 0
+  const steering = keyIsDown(LEFT_ARROW) ? -0.05 : keyIsDown(RIGHT_ARROW) ? 0.05 : 0
+  const accel = keyIsDown(UP_ARROW) ? 1 : keyIsDown(DOWN_ARROW) ? -1 : 0
 
   return [steering, createVector(0, accel)]
 }
 
 function readNetwork(car: Car, readings: number[]): [number, p5.Vector] {
-  let [steer, acc] = car.network.feedforward(readings);
-  let steering = steer <= 1 / 3 ? 0.05 : steer >= 2 / 3 ? -0.05 : 0
-  
+  const [steer, acc] = car.network.feedforward(readings);
+  const steering = steer <= 1 / 3 ? 0.05 : steer >= 2 / 3 ? -0.05 : 0
+
   return [steering, createVector(0, acc)]
 }
 
@@ -95,7 +95,7 @@ function handleMovement(car: Car, readings: number[]) {
   // let [steering, force] = readControls();
 
   // Fetch neural network results
-  let [steering, force] = readNetwork(car, readings);
+  const [steering, force] = readNetwork(car, readings);
 
   car.applyForce(force.rotate(car.angle - PI / 2))
   car.angle += steering
@@ -119,15 +119,15 @@ function handleIntersections(car: Car): number[] | undefined {
     }
   }))
 
-  let readings: number[] = []
+  const readings: number[] = []
 
   // Draw sensors to the nearest wall in each direction
-  for (let sensor of car.sensors) {
-    let intersections = simulation.track.walls.map((w: Wall) => 
+  for (const sensor of car.sensors) {
+    const intersections = simulation.track.walls.map((w: Wall) =>
       sensor.intersect(w)).filter(i => i) as p5.Vector[]
 
     if (intersections.length) {
-      let [closest, dist] = intersections.map(i => [i, p5.Vector.dist(car.pos, i)])
+      const [closest, dist] = intersections.map(i => [i, p5.Vector.dist(car.pos, i)])
         .reduce(([min, md], [nxt, nd]) => (md < nd ? [min, md] : [nxt, nd])) as [p5.Vector, number]
 
       sensor.show(closest, dist)
